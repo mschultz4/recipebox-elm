@@ -1,0 +1,39 @@
+{
+  "name": "recipebox",
+  "version": "1.0.0",
+  "description": "recipe box - sample elm application",
+  "engines": {
+    "node": "*"
+  },
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "startdb": "mongod --smallfiles",
+    "build": "webpack --devtool source-map",
+    "build-prod": "webpack --optimize-minimize",
+    "dev": "webpack -w -d --devtool eval",
+    "clean": "esformatter -i './src/**/*.js'"
+  },
+  "author": "Matt Schultz",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.3.0",
+    "body-parser": "^1.15.2",
+    "bootstrap": "^3.3.7",
+    "browser": "^0.2.6",
+    "express": "^4.14.0",
+    "keymirror": "^0.1.1",
+    "lodash": "^4.14.1",
+    "mongodb": "^2.2.10",
+    "object-assign": "^4.1.0",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.13.2",
+    "babel-loader": "^6.2.5",
+    "babel-preset-es2015": "^6.13.2",
+    "eslint": "^3.2.2",
+    "webpack": "^1.13.2"
+  }
+}
