@@ -1,28 +1,20 @@
-var path = require("path");
+var path              = require("path");
+var htmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
 	entry: "./src/app.elm",
 	output: {
 		path: path.join(__dirname, "dist"),
-		filename: "bundle.js"
-	},
-	externals: {
-		lodash: "_"
+		filename: "index.js"
 	},
 	module: {
-		loaders: [{
-				test: /\.js$/,
-				exclude: [/node_modules/, /elm-stuff/],
-				loader: "babel",
-				query: {
-					presets: ['es2015']
-				}
-			},
+		loaders: [
 			{
 				test: /\.elm$/,
 				exclude: [/node_modules/, /elm-stuff/],
 				loader: "elm-webpack",
 			}
 		]
-	}
+	},
+	plugins:[new htmlWebpackPlugin({title: "Elm Recipe"})]
 };
