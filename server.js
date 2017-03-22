@@ -1,25 +1,17 @@
 "use strict";
 
-let express     = require('express');
-let app         = express();
-let MongoClient = require('mongodb').MongoClient;
-let assert      = require('assert');
-let bcrypt      = require('bcryptjs');
-let bodyParser  = require('body-parser');
-let path        = require('path');
+let express    = require('express');
+let app        = express();
+let pg         = require('pg');
+let assert     = require('assert');
+let bcrypt     = require('bcryptjs');
+let bodyParser = require('body-parser');
+let path       = require('path');
 let userCollection;
 let recipeCollection;
 
 const saltRounds = 10;
-const port       = process.env.PORT || 443;
-const ip         = process.env.ip;
-const url        = 'mongodb://localhost:27017/recipes';
-
-MongoClient.connect(url, function(err, db) {
-  assert.equal(null, err);
-  userCollection = db.collection('users');
-  recipeCollection = db.collection('recipes');
-});
+const port       = 443;
 
 //app.use(express.static('./dist'));
 app.use(bodyParser.json());
