@@ -2,19 +2,24 @@ var path              = require("path");
 var htmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-	entry: "./src/app.elm",
+	entry: path.join(__dirname, "src/index.js"),
 	output: {
 		path: path.join(__dirname, "dist"),
-		filename: "index.js"
+		filename: "main.js"
 	},
 	module: {
 		loaders: [
 			{
 				test: /\.elm$/,
 				exclude: [/node_modules/, /elm-stuff/],
-				loader: "elm-webpack",
-			}
+				loader: "elm-webpack-loader?verbose=true&warn=true&debug=true",
+			},
 		]
 	},
-	plugins:[new htmlWebpackPlugin({title: "Elm Recipe"})]
+	plugins:[ new htmlWebpackPlugin({
+		template: 'src/index.html',
+		inject:   'body',
+		filename: 'index.html'
+   		})
+	]
 };
