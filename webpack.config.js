@@ -2,24 +2,38 @@ var path              = require("path");
 var htmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-	entry: path.join(__dirname, "src/index.js"),
+	entry: [
+		'webpack-dev-server/client?http://localhost:8080', path.resolve(__dirname, 
+		"src/index.js")],
+
+	devServer: {
+		// serve index.html in place of 404 responses
+		historyApiFallback: true,
+		contentBase: path.resolve(__dirname, "src")
+	},
+
 	output: {
 		path: path.join(__dirname, "dist"),
 		filename: "main.js"
 	},
+
 	module: {
 		loaders: [
 			{
 				test: /\.elm$/,
 				exclude: [/node_modules/, /elm-stuff/],
-				loader: "elm-webpack-loader?verbose=true&warn=true&debug=true",
+				loader: "elm-hot-loader!elm-webpack-loader?verbose=true&warn=true&debug=true",
 			},
-		]
+		],
+
+		noParse: /\.elm$/
 	},
-	plugins:[ new htmlWebpackPlugin({
-		template: 'src/index.html',
-		inject:   'body',
-		filename: 'index.html'
+
+	plugins:[ 
+		new htmlWebpackPlugin({
+			template: path.resolve(__dirname, "src/index.html"),
+			inject:   'body',
+			filename: 'index.html'
    		})
 	]
 };
