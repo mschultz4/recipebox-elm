@@ -6,29 +6,27 @@ import Html.Events exposing (onInput, onClick)
 import Models exposing (..)
 
 
-view : Recipe -> Html Msg
-view recipe =
+view : Model -> Html Msg
+view model =
     section []
         [ div [ class "container" ]
             [ navBar
-            , div [] [ text (recipe.name ++ " " ++ toString recipe.newRoute) ]
-            , viewPage recipe.newRoute
+            , viewPage model.newRoute model
             ]
         ]
 
 
-viewPage : Route -> Html Msg
-viewPage route =
+viewPage : Route -> Model -> Html Msg
+viewPage route model =
     case route of
         Home ->
-            div [] [ text "These are your recipes" ]
-
-        New ->
             div []
-                [ input [ type_ "text", placeholder "Name", onInput UpdateName ] []
-                , input [ type_ "text", placeholder "Ingredients", onInput UpdateIngredients ] []
+                [ text "These are your recipes"
                 , input [ type_ "checkbox", onClick ToggleFavorite ] []
                 ]
+
+        New ->
+            newRecipeFormContainer model
 
         Login ->
             div [] [ text "login here" ]
@@ -72,3 +70,105 @@ navBar =
                 ]
             ]
         ]
+
+
+newRecipeFormContainer : Model -> Html Msg
+newRecipeFormContainer model =
+    div [ class "container" ]
+        [ div [ class "row" ]
+            [ div [ class "col-7" ]
+                [ newRecipeForm model ]
+            , div
+                [ class "col-5" ]
+                [ recipeDisplay model ]
+            ]
+        ]
+
+
+newRecipeForm : Model -> Html Msg
+newRecipeForm model =
+    Html.form []
+        [ div [ class "form-group" ]
+            [ label [ for "recipe-title" ] [ text "Title" ]
+            , input
+                [ name "recipe-title"
+                , class "form-control"
+                , type_ "text"
+                , value model.newTitle
+                , placeholder "Title"
+                , onInput UpdateTitle
+                , placeholder "Title"
+                ]
+                []
+            ]
+        , div [ class "form-group" ]
+            [ label [ for "ingredients" ] [ text "Ingredients" ]
+            , div [ class "input-group" ]
+                [ input
+                    [ name "ingredients"
+                    , class "form-control"
+                    , type_ "text"
+                    , value model.newIngredient
+                    , placeholder "Enter an ingredient"
+                    , onInput UpdateIngredients
+                    ]
+                    []
+                , span [ class "input-group-btn" ]
+                    [ button
+                        [ class "btn btn-secondary"
+                        , type_ "button"
+                        , onClick AddIngredient
+                        ]
+                        [ text "Add" ]
+                    ]
+                ]
+            ]
+        , div [ class "form-group" ]
+            [ label [ for "instructions" ] [ text "Instructions" ]
+            , div [ class "input-group" ]
+                [ input
+                    [ name "instructions"
+                    , class "form-control"
+                    , type_ "text"
+                    , placeholder "Enter an instruction"
+                    , value model.newInstruction
+                    , onInput UpdateInstructions
+                    ]
+                    []
+                , span [ class "input-group-btn" ]
+                    [ button
+                        [ class "btn btn-secondary"
+                        , type_ "button"
+                        , onClick AddInstruction
+                        ]
+                        [ text "Add" ]
+                    ]
+                ]
+            ]
+        , button
+            [ class "btn btn-primary btn-block"
+            , type_ "button"
+            , onClick SaveRecipe
+            ]
+            [ text "Save" ]
+        ]
+
+
+recipeDisplay : Model -> Html Msg
+recipeDisplay model =
+    div []
+        [ h4 [] [ text model.newTitle ]
+        , dl []
+            [ dt [] [ text "Ingredients" ]
+            , dd [] [ listDisplay model.newIngredients ]
+            , dt [] [ text "Instructions" ]
+            , dd [] [ listDisplay model.newInstructions ]
+            ]
+        ]
+
+
+listDisplay : List String -> Html Msg
+listDisplay list =
+    list
+        |> List.map (\item -> li [] [ text item ])
+        |> ol []

@@ -6,7 +6,7 @@ import Models exposing (..)
 import Update exposing (..)
 
 
-main : Program Never Recipe Msg
+main : Program Never Model Msg
 main =
     Navigation.program OnLocationChange
         { init = init
@@ -16,8 +16,8 @@ main =
         }
 
 
-init : Navigation.Location -> ( Recipe, Cmd Msg )
+init : Navigation.Location -> ( Model, Cmd Msg )
 init location =
-    ( newRecipe (parseLocation location)
+    ( emptyModel (parseLocation location)
     , Cmd.none
     )

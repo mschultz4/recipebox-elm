@@ -1,45 +1,92 @@
 module Update exposing (..)
 
-import Navigation
 import Models exposing (..)
+
 
 -- UPDATE
 
 
-
-update : Msg -> Recipe -> (Recipe, Cmd Msg)
-update msg model=
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
     case msg of
-
-        UpdateName str ->
-            ({ model | name = str }, Cmd.none)
+        UpdateTitle str ->
+            ( { model | newTitle = str }, Cmd.none )
 
         UpdateIngredients str ->
-            ({ model | ingredients = str }, Cmd.none)
+            ( { model | newIngredient = str }, Cmd.none )
+
+        UpdateInstructions str ->
+            ( { model | newInstruction = str }, Cmd.none )
 
         ToggleFavorite ->
-            ({ model 
-                | favorite = 
-                    if model.favorite then
+            ( { model
+                | newFavorite =
+                    if model.newFavorite then
                         False
-                    else 
+                    else
                         True
-            }, Cmd.none)
-            
-        Add str ->
-            ({ model | ingredients = "salami" }, Cmd.none)
-        
+              }
+            , Cmd.none
+            )
+
+        AddIngredient ->
+            ( { model
+                | newIngredients =
+                    List.append model.newIngredients [ model.newIngredient ]
+                , newIngredient = ""
+              }
+            , Cmd.none
+            )
+
+        AddInstruction ->
+            ( { model
+                | newInstructions =
+                    List.append model.newInstructions [ model.newInstruction ]
+                , newInstruction = ""
+              }
+            , Cmd.none
+            )
+
         OnLocationChange location ->
-            let 
-                newRoute = 
+            let
+                newRoute =
                     parseLocation location
-            in 
-                ({ model | newRoute = newRoute }, Cmd.none)
+            in
+                ( { model | newRoute = newRoute }, Cmd.none )
+
+        SaveRecipe ->
+            let
+                oldModel =
+                    model
+            in
+                ( { model
+                    | recipes = List.append model.recipes [ createNewRecipe oldModel ]
+                    , newIngredient = ""
+                    , newInstruction = ""
+                    , newTitle = ""
+                    , newIngredients = [ "" ]
+                    , newInstructions = [ "" ]
+                    , newNotes = ""
+                    , newFavorite = False
+                  }
+                , Cmd.none
+                )
+
+
+createNewRecipe : Model -> Recipe
+createNewRecipe model =
+    { title = model.newTitle
+    , ingredients = model.newIngredients
+    , instructions = model.newInstructions
+    , notes = model.newNotes
+    , favorite = model.newFavorite
+    }
+
 
 
 -- SUBSCRIPTIONS
 
 
-subscriptions : Recipe -> Sub Msg
-subscriptions model =
+subscriptions : Model -> Sub Msg
+subscriptions recipe =
     Sub.none

@@ -2,51 +2,58 @@ module Models exposing (..)
 
 import Navigation exposing (Location)
 import UrlParser exposing (..)
+
+
 -- MODEL
 
-type alias Recipes =
-    { recipes : List Recipe
-    , visibility : String
-    , uid : Int
+
+type alias Model =
+    { uid : Int
+    , newRoute : Route
+    , recipes : List Recipe
+    , newIngredient : String
+    , newInstruction : String
+    , newTitle : String
+    , newIngredients : List String
+    , newInstructions : List String
+    , newNotes : String
+    , newFavorite : Bool
     }
 
 
 type alias Recipe =
-    { name : String
-    , ingredients : String
+    { title : String
+    , ingredients : List String
     , instructions : List String
     , notes : String
     , favorite : Bool
-    , rid : Int
-    , newRoute : Route
-    }
-
-emptyRecipes : Recipes
-emptyRecipes = 
-    { recipes = []
-    , visibility = "ALL"
-    , uid  = 0
     }
 
 
-newRecipe : Route -> Recipe
-newRecipe route = 
-    { name = ""
-    , ingredients = ""
-    , instructions = []
-    , notes = ""
-    , favorite = False
-    , rid = 0
-    , newRoute = route
+emptyModel : Route -> Model
+emptyModel route =
+    { newRoute = route
+    , uid = 0
+    , recipes = []
+    , newIngredient = ""
+    , newInstruction = ""
+    , newTitle = ""
+    , newIngredients = []
+    , newInstructions = []
+    , newNotes = ""
+    , newFavorite = False
     }
 
 
 type Msg
-    = Add String
-    | ToggleFavorite 
-    | UpdateName String
+    = AddIngredient
+    | AddInstruction
+    | ToggleFavorite
+    | UpdateTitle String
     | UpdateIngredients String
+    | UpdateInstructions String
     | OnLocationChange Navigation.Location
+    | SaveRecipe
 
 
 
@@ -54,22 +61,23 @@ type Msg
 
 
 type Route
-  = Home
-  | New
-  | Import
-  | Login
-  | NotFound
+    = Home
+    | New
+    | Import
+    | Login
+    | NotFound
 
 
 route : UrlParser.Parser (Route -> a) a
 route =
-  UrlParser.oneOf
-    [ UrlParser.map Home top
-    , UrlParser.map New (UrlParser.s "New")
-    , UrlParser.map Import (UrlParser.s "Import")
-    , UrlParser.map Login (UrlParser.s "Login")
-    ]
- 
+    UrlParser.oneOf
+        [ UrlParser.map Home top
+        , UrlParser.map New (UrlParser.s "New")
+        , UrlParser.map Import (UrlParser.s "Import")
+        , UrlParser.map Login (UrlParser.s "Login")
+        ]
+
+
 parseLocation : Location -> Route
 parseLocation location =
     case (UrlParser.parseHash route location) of
