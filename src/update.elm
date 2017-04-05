@@ -1,6 +1,10 @@
 module Update exposing (..)
 
 import Models exposing (..)
+import Http exposing (..)
+import Json.Decode as Decode
+import Debug exposing (log)
+import Dict
 
 
 -- UPDATE
@@ -72,6 +76,27 @@ update msg model =
                 , Cmd.none
                 )
 
+        Send ->
+            ( model, getStuff )
+
+        PostResponse (Ok dict) ->
+            ( model |> log (toString dict)
+            , Cmd.none
+            )
+
+        PostResponse (Err error) ->
+            ( model |> log (httpErrorString error)
+            , Cmd.none
+            )
+
+
+
+-- getStuff : Http.Request (Dict.Dict String a)
+
+
+getStuff =
+    Http.send PostResponse (Http.get "http://localhost:8080/api" (Decode.dict Decode.string))
+
 
 createNewRecipe : Model -> Recipe
 createNewRecipe model =
@@ -90,3 +115,26 @@ createNewRecipe model =
 subscriptions : Model -> Sub Msg
 subscriptions recipe =
     Sub.none
+
+
+httpErrorString : Http.Error -> String
+httpErrorString error =
+    case error of
+        BadUrl text ->
+            "Bad Url: " ++ text
+
+        Timeout ->
+            "Http Timeout"
+
+        NetworkError ->
+            "Network Error"
+
+        BadStatus response ->
+            "Bad Http Status: " ++ toString response.status.code
+
+        BadPayload message response ->
+            "Bad Http Payload: "
+                ++ toString message
+                ++ " ("
+                ++ toString response.status.code
+                ++ ")"

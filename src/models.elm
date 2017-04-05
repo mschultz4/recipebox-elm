@@ -2,6 +2,8 @@ module Models exposing (..)
 
 import Navigation exposing (Location)
 import UrlParser exposing (..)
+import Http exposing (..)
+import Dict
 
 
 -- MODEL
@@ -54,6 +56,8 @@ type Msg
     | UpdateInstructions String
     | OnLocationChange Navigation.Location
     | SaveRecipe
+    | Send
+    | PostResponse (Result Http.Error (Dict.Dict String String))
 
 
 

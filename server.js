@@ -7,11 +7,9 @@ let assert     = require('assert');
 let bcrypt     = require('bcryptjs');
 let bodyParser = require('body-parser');
 let path       = require('path');
-let userCollection;
-let recipeCollection;
 
 const saltRounds = 10;
-const port       = 443;
+const port       = 8080;
 
 //app.use(express.static('./dist'));
 app.use(bodyParser.json());
@@ -22,11 +20,18 @@ app.get('/', function (req, res) {
   res.render('./dist/index.html');
 });
 
-app.get('/api/data', function (req, res) {
+app.get('/api', function (req, res) {
   return res.json({
     data: 'hello there'
   });
 });
+
+app.post("/test", function (req, res){
+  console.log(req);
+  return res.json({
+    data: 'hello there'
+  });
+})
 
 app.post('/api/signup', function (req, res) {
     userCollection

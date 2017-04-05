@@ -29,7 +29,14 @@ viewPage route model =
             newRecipeFormContainer model
 
         Login ->
-            div [] [ text "login here" ]
+            div []
+                [ text "login here"
+                , button
+                    [ onClick Send
+                    , class "btn btn-primary"
+                    ]
+                    [ text "send" ]
+                ]
 
         Import ->
             div [] [ text "import" ]

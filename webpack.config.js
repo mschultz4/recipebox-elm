@@ -3,7 +3,8 @@ var htmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
 	entry: [
-		'webpack-dev-server/client?http://localhost:8080', path.resolve(__dirname, 
+		// "webpack-dev-server/client?" + require("os").hostname() + ":8080",
+		 path.resolve(__dirname, 
 		"src/index.js")],
 
 	devServer: {
