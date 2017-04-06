@@ -2,8 +2,9 @@ module Main exposing (..)
 
 import Navigation
 import Views exposing (..)
-import Models exposing (..)
-import Update exposing (..)
+import Types exposing (..)
+import State exposing (..)
+import Router exposing (parseLocation)
 
 
 main : Program Never Model Msg

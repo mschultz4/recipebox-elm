@@ -1,10 +1,9 @@
-module Update exposing (..)
+module State exposing (..)
 
-import Models exposing (..)
-import Http exposing (..)
-import Json.Decode as Decode
+import Types exposing (..)
 import Debug exposing (log)
-import Dict
+import Router exposing (..)
+import Rest exposing (getStuff, httpErrorString)
 
 
 -- UPDATE
@@ -73,7 +72,7 @@ update msg model =
                     , newNotes = ""
                     , newFavorite = False
                   }
-                , Cmd.none
+                , Rest.postRecipe (createNewRecipe oldModel)
                 )
 
         Send ->
@@ -89,13 +88,15 @@ update msg model =
             , Cmd.none
             )
 
+        RecipePostResponse (Ok string) ->
+            ( model |> log (string)
+            , Cmd.none
+            )
 
-
--- getStuff : Http.Request (Dict.Dict String a)
-
-
-getStuff =
-    Http.send PostResponse (Http.get "http://localhost:8080/api" (Decode.dict Decode.string))
+        RecipePostResponse (Err error) ->
+            ( model |> log (httpErrorString error)
+            , Cmd.none
+            )
 
 
 createNewRecipe : Model -> Recipe
@@ -115,26 +116,3 @@ createNewRecipe model =
 subscriptions : Model -> Sub Msg
 subscriptions recipe =
     Sub.none
-
-
-httpErrorString : Http.Error -> String
-httpErrorString error =
-    case error of
-        BadUrl text ->
-            "Bad Url: " ++ text
-
-        Timeout ->
-            "Http Timeout"
-
-        NetworkError ->
-            "Network Error"
-
-        BadStatus response ->
-            "Bad Http Status: " ++ toString response.status.code
-
-        BadPayload message response ->
-            "Bad Http Payload: "
-                ++ toString message
-                ++ " ("
-                ++ toString response.status.code
-                ++ ")"

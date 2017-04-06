@@ -26,6 +26,11 @@ app.get('/api', function (req, res) {
   });
 });
 
+app.post('/api/saverecipe', function (req, res) {
+  console.log(req.body);
+  return res.json("saved");
+});
+
 app.post("/test", function (req, res){
   console.log(req);
   return res.json({

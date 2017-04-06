@@ -1,7 +1,6 @@
-module Models exposing (..)
+module Types exposing (..)
 
 import Navigation exposing (Location)
-import UrlParser exposing (..)
 import Http exposing (..)
 import Dict
 
@@ -58,10 +57,7 @@ type Msg
     | SaveRecipe
     | Send
     | PostResponse (Result Http.Error (Dict.Dict String String))
-
-
-
--- URL PARSING
+    | RecipePostResponse (Result Http.Error String)
 
 
 type Route
@@ -70,23 +66,3 @@ type Route
     | Import
     | Login
     | NotFound
-
-
-route : UrlParser.Parser (Route -> a) a
-route =
-    UrlParser.oneOf
-        [ UrlParser.map Home top
-        , UrlParser.map New (UrlParser.s "New")
-        , UrlParser.map Import (UrlParser.s "Import")
-        , UrlParser.map Login (UrlParser.s "Login")
-        ]
-
-
-parseLocation : Location -> Route
-parseLocation location =
-    case (UrlParser.parseHash route location) of
-        Just route ->
-            route
-
-        Nothing ->
-            NotFound
