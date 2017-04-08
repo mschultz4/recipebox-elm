@@ -7,11 +7,10 @@
   },
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "startdb": "mongod --smallfiles",
-    "build": "webpack-dev-server --hot --inline",
-    "build-prod": "webpack --optimize-minimize",
-    "clean": "esformatter -i './src/**/*.js'"
+    "dev-frontend": "webpack-dev-server --hot --inline",
+    "dev-server": "sudo nodemon server.js localhost 8080",
+    "dev-start": "npm run dev-frontend & npm run dev-server",
+    "build-prod": "webpack --optimize-minimize"
   },
   "author": "Matt Schultz",
   "license": "ISC",

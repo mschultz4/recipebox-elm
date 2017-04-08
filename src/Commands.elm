@@ -1,4 +1,4 @@
-module Rest exposing (..)
+module Commands exposing (..)
 
 import Types exposing (..)
 import Http exposing (..)

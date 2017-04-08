@@ -3,7 +3,7 @@ module State exposing (..)
 import Types exposing (..)
 import Debug exposing (log)
 import Router exposing (..)
-import Rest exposing (getStuff, httpErrorString)
+import Commands exposing (getStuff, httpErrorString)
 
 
 -- UPDATE
@@ -14,6 +14,9 @@ update msg model =
     case msg of
         UpdateTitle str ->
             ( { model | newTitle = str }, Cmd.none )
+
+        UpdateNotes str ->
+            ( { model | newNotes = str }, Cmd.none )
 
         UpdateIngredients str ->
             ( { model | newIngredient = str }, Cmd.none )
@@ -32,7 +35,7 @@ update msg model =
             , Cmd.none
             )
 
-        AddIngredient ->
+        UpdateIngredient ->
             ( { model
                 | newIngredients =
                     List.append model.newIngredients [ model.newIngredient ]
@@ -41,7 +44,7 @@ update msg model =
             , Cmd.none
             )
 
-        AddInstruction ->
+        UpdateInstruction ->
             ( { model
                 | newInstructions =
                     List.append model.newInstructions [ model.newInstruction ]
@@ -72,7 +75,7 @@ update msg model =
                     , newNotes = ""
                     , newFavorite = False
                   }
-                , Rest.postRecipe (createNewRecipe oldModel)
+                , Commands.postRecipe (createNewRecipe oldModel)
                 )
 
         Send ->

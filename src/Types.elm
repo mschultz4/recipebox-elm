@@ -47,12 +47,13 @@ emptyModel route =
 
 
 type Msg
-    = AddIngredient
-    | AddInstruction
-    | ToggleFavorite
-    | UpdateTitle String
+    = UpdateTitle String
+    | UpdateIngredient
     | UpdateIngredients String
+    | UpdateInstruction
     | UpdateInstructions String
+    | UpdateNotes String
+    | ToggleFavorite
     | OnLocationChange Navigation.Location
     | SaveRecipe
     | Send

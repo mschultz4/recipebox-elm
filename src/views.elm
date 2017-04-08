@@ -102,7 +102,7 @@ newRecipeForm model =
                 , class "form-control"
                 , type_ "text"
                 , value model.newTitle
-                , placeholder "Title"
+                , placeholder "Enter the Title"
                 , onInput UpdateTitle
                 , placeholder "Title"
                 ]
@@ -124,7 +124,7 @@ newRecipeForm model =
                     [ button
                         [ class "btn btn-secondary"
                         , type_ "button"
-                        , onClick AddIngredient
+                        , onClick UpdateIngredient
                         ]
                         [ text "Add" ]
                     ]
@@ -146,11 +146,30 @@ newRecipeForm model =
                     [ button
                         [ class "btn btn-secondary"
                         , type_ "button"
-                        , onClick AddInstruction
+                        , onClick UpdateInstruction
                         ]
                         [ text "Add" ]
                     ]
                 ]
+            ]
+        , div [ class "form-group" ]
+            [ label [ for "favorite" ] [ text "Favorite" ]
+            , input
+                [ name "favorite"
+                , class "form-control"
+                , type_ "checkbox"
+                , onClick ToggleFavorite
+                ]
+                []
+            ]
+        , div [ class "form-group" ]
+            [ label [ for "notes" ] [ text "Notes" ]
+            , textarea
+                [ name "favorite"
+                , class "form-control"
+                , onInput UpdateNotes
+                ]
+                []
             ]
         , button
             [ class "btn btn-primary btn-block"
@@ -170,6 +189,10 @@ recipeDisplay model =
             , dd [] [ listDisplay model.newIngredients ]
             , dt [] [ text "Instructions" ]
             , dd [] [ listDisplay model.newInstructions ]
+            , dt [] [ text "Favorite" ]
+            , dd [] [ text (toString model.newFavorite) ]
+            , dt [] [ text "Notes" ]
+            , dd [] [ text model.newNotes ]
             ]
         ]
 

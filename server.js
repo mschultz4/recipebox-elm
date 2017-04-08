@@ -10,6 +10,7 @@ let path       = require('path');
 
 const saltRounds = 10;
 const port       = 8080;
+const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/recipebox';
 
 //app.use(express.static('./dist'));
 app.use(bodyParser.json());
@@ -27,6 +28,30 @@ app.get('/api', function (req, res) {
 });
 
 app.post('/api/saverecipe', function (req, res) {
+  pg.connect(connectionString, (err, client, done) => {
+
+      // Handle connection errors
+      if (err) {
+        done();
+        console.log(err);
+        return res.status(500).json({success: false, data: err});
+      }
+
+      // SQL Query > Update Data
+      client.query(
+        `INSERT INTO recipes ( title, favorite, notes) 
+         VALUES (($1), ($2),($3));`
+         , [req.body.title, req.body.favorite, req.body.notes])
+        .then( () => client.end());
+      
+      // SQL Query > Select Data
+      // const query = client.query("SELECT * FROM items ORDER BY id ASC");
+
+      // Stream results back one row at a time
+      // query.on('row', (row) => {
+      //   results.push(row);
+      // });
+  });
   console.log(req.body);
   return res.json("saved");
 });

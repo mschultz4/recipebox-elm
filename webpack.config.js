@@ -10,7 +10,7 @@ module.exports = {
 	devServer: {
 		// serve index.html in place of 404 responses
 		historyApiFallback: true,
-		contentBase: path.resolve(__dirname, "src")
+	 	contentBase: path.resolve(__dirname, "src")
 	},
 
 	output: {
