@@ -157,6 +157,7 @@ newRecipeForm model =
             , input
                 [ name "favorite"
                 , class "form-control"
+                , checked model.newFavorite
                 , type_ "checkbox"
                 , onClick ToggleFavorite
                 ]
@@ -167,6 +168,7 @@ newRecipeForm model =
             , textarea
                 [ name "favorite"
                 , class "form-control"
+                , value model.newNotes
                 , onInput UpdateNotes
                 ]
                 []

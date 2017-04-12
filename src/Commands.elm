@@ -45,6 +45,9 @@ recipeEncoder recipe =
         attributes =
             [ ( "title", Encode.string recipe.title )
             , ( "favorite", Encode.bool recipe.favorite )
+            , ( "ingredients", Encode.list (List.map Encode.string recipe.ingredients) )
+            , ( "instructions", Encode.list (List.map Encode.string recipe.instructions) )
+            , ( "notes", Encode.string recipe.notes )
             ]
     in
         Encode.object attributes
