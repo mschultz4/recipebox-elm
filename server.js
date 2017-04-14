@@ -32,29 +32,20 @@ app.get('/', function (req, res) {
   res.render('./dist/index.html');
 });
 
-app.get('/api', function (req, res) {
-  return res.json({
-    data: 'hello there'
-  });
-});
-
 app.post('/api/saverecipe', function (req, res) {
   db.tx(t => {
-      return t.one(
-          `INSERT INTO recipes (title, notes, favorite) 
-          VALUES ($[title], $[notes], $[favorite]) 
-          RETURNING recipeid`, req.body)
+      return t.one(queries.insertRecipe, req.body)
           .then(data => {
             let ingredientsQueries = req.body.ingredients.map(ing => {
-              return t.none(`INSERT INTO ingredients (recipeid, ingredient, ordernumber) 
-                          VALUES ($1, $2, $3)`, [data.recipeid, ing, 13219]);
+              return t.none(queries.insertIngredient, Object.assign({}, {recipeid: data.recipeid}, ing));
             });
 
             let instructionsQueries = req.body.instructions.map(ins => {
-              return t.none(`INSERT INTO instructions (recipeid, instruction, ordernumber) 
-                          VALUES ($1, $2, $3)`, [data.recipeid, ins, 13219]);
+              return t.none(queries.insertInstruction, Object.assign({}, {recipeid: data.recipeid}, ins));
             });
-              return t.batch(ingredientsQueries.concat(instructionsQueries));
+            console.log(req.body);
+              
+            return t.batch([].concat(ingredientsQueries, instructionsQueries));
           });
   })
   .then(events => {
@@ -68,13 +59,17 @@ app.post('/api/saverecipe', function (req, res) {
   return res.json(req.body);
 });
 
-app.post("/test", function (req, res){
-  console.log(req);
-  return res.json({
-    data: 'hello there'
+app.get('/api/recipes/', function(req, res){
+  var recipes;
+  db.one(queries.selectRecipes)
+  .then(data => {
+      return res.json(data);
+  })
+  .catch(error => {
+      console.log(error);
   });
-})
 
+});
 app.post('/api/signup', function (req, res) {
     userCollection
       .findOne({"email": req.body.email})
@@ -129,21 +124,6 @@ app.get('/api/recipes/:creator_id', function(req, res){
       });
 });
 
-app.post('/api/recipes', function(req, res){
-    recipeCollection
-      .insertOne({
-        creator_id: req.body.creator_id,
-        recipe : req.body.recipe
-      })
-      .then(function(document){
-        res.json({
-          "message": "recipe created",
-          "document": document
-        });
-      });
-});
-
 app.listen(port, function () {
   console.log('Example app listening on port ' + port + '!');
 });
-

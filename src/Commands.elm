@@ -2,18 +2,18 @@ module Commands exposing (..)
 
 import Types exposing (..)
 import Http exposing (..)
-import Json.Decode as Decode
+import Json.Decode as Decode exposing (..)
 import Json.Encode as Encode exposing (..)
 
 
-getStuff : Cmd Msg
-getStuff =
-    Http.send PostResponse (Http.get "http://localhost:8080/api" (Decode.dict Decode.string))
+getRecipes : Cmd Msg
+getRecipes =
+    Http.send GetRecipeResponse (Http.get "/api/recipes" recipesDecoder)
 
 
 postRecipe : Recipe -> Cmd Msg
 postRecipe recipe =
-    Http.send RecipePostResponse (Http.post "/api/saverecipe" (Http.jsonBody (recipeEncoder recipe)) Decode.string)
+    Http.send PostRecipeResponse (Http.post "/api/saverecipe" (Http.jsonBody (recipeEncoder recipe)) Decode.string)
 
 
 httpErrorString : Http.Error -> String
@@ -45,9 +45,65 @@ recipeEncoder recipe =
         attributes =
             [ ( "title", Encode.string recipe.title )
             , ( "favorite", Encode.bool recipe.favorite )
-            , ( "ingredients", Encode.list (List.map Encode.string recipe.ingredients) )
-            , ( "instructions", Encode.list (List.map Encode.string recipe.instructions) )
+            , ( "ingredients", Encode.list (List.map ingredientEncoder recipe.ingredients) )
+            , ( "instructions", Encode.list (List.map instructionEncoder recipe.instructions) )
             , ( "notes", Encode.string recipe.notes )
             ]
     in
         Encode.object attributes
+
+
+ingredientEncoder : Ingredient -> Encode.Value
+ingredientEncoder ingredient =
+    let
+        attributes =
+            [ ( "ingredient", Encode.string ingredient.ingredient )
+            , ( "sequence", Encode.int ingredient.sequence )
+            ]
+    in
+        Encode.object attributes
+
+
+instructionEncoder : Instruction -> Encode.Value
+instructionEncoder instruction =
+    let
+        attributes =
+            [ ( "instruction", Encode.string instruction.instruction )
+            , ( "sequence", Encode.int instruction.sequence )
+            ]
+    in
+        Encode.object attributes
+
+
+recipesDecoder : Decoder Recipes
+recipesDecoder =
+    map Recipes
+        (field "recipes" (Decode.list recipeDecoder))
+
+
+recipeDecoder : Decoder Recipe
+recipeDecoder =
+    map5 Recipe
+        (field "title" Decode.string)
+        (field "ingredients" (Decode.list ingredientDecoder))
+        (field "instructions" (Decode.list instructionDecoder))
+        (field "notes" Decode.string)
+        (field "favorite" Decode.bool)
+
+
+ingredientDecoder : Decoder Ingredient
+ingredientDecoder =
+    map2 Ingredient
+        (field "ingredient" Decode.string)
+        (field "sequence" Decode.int)
+
+
+instructionDecoder : Decoder Instruction
+instructionDecoder =
+    map2 Instruction
+        (field "instruction" Decode.string)
+        (field "sequence" Decode.int)
+
+
+
+-- recipeDecoder : Value -> List Recipe

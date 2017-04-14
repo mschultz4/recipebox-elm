@@ -3,7 +3,7 @@ module State exposing (..)
 import Types exposing (..)
 import Debug exposing (log)
 import Router exposing (..)
-import Commands exposing (getStuff, httpErrorString)
+import Commands exposing (getRecipes, httpErrorString)
 
 
 -- UPDATE
@@ -18,11 +18,19 @@ update msg model =
         UpdateNotes str ->
             ( { model | newNotes = str }, Cmd.none )
 
-        UpdateIngredients str ->
-            ( { model | newIngredient = str }, Cmd.none )
+        UpdateNewIngredient str ->
+            let
+                ing =
+                    model.newIngredient
+            in
+                ( { model | newIngredient = { ing | ingredient = str } }, Cmd.none )
 
-        UpdateInstructions str ->
-            ( { model | newInstruction = str }, Cmd.none )
+        UpdateNewInstruction str ->
+            let
+                ins =
+                    model.newInstruction
+            in
+                ( { model | newInstruction = { ins | instruction = str } }, Cmd.none )
 
         ToggleFavorite ->
             ( { model
@@ -35,20 +43,20 @@ update msg model =
             , Cmd.none
             )
 
-        UpdateIngredient ->
+        AddIngredient ->
             ( { model
                 | newIngredients =
                     List.append model.newIngredients [ model.newIngredient ]
-                , newIngredient = ""
+                , newIngredient = { ingredient = "", sequence = 0 }
               }
             , Cmd.none
             )
 
-        UpdateInstruction ->
+        AddInstruction ->
             ( { model
                 | newInstructions =
                     List.append model.newInstructions [ model.newInstruction ]
-                , newInstruction = ""
+                , newInstruction = { instruction = "", sequence = 0 }
               }
             , Cmd.none
             )
@@ -67,36 +75,36 @@ update msg model =
             in
                 ( { model
                     | recipes = List.append model.recipes [ createNewRecipe oldModel ]
-                    , newIngredient = ""
-                    , newInstruction = ""
+                    , newIngredient = { ingredient = "", sequence = 0 }
+                    , newInstruction = { instruction = "", sequence = 0 }
                     , newTitle = ""
-                    , newIngredients = [ "" ]
-                    , newInstructions = [ "" ]
+                    , newIngredients = []
+                    , newInstructions = []
                     , newNotes = ""
                     , newFavorite = False
                   }
                 , Commands.postRecipe (createNewRecipe oldModel)
                 )
 
-        Send ->
-            ( model, getStuff )
+        GetRecipes ->
+            ( model, getRecipes )
 
-        PostResponse (Ok dict) ->
-            ( model |> log (toString dict)
+        GetRecipeResponse (Ok recipesList) ->
+            ( { model | recipes = recipesList.recipes }
             , Cmd.none
             )
 
-        PostResponse (Err error) ->
+        GetRecipeResponse (Err error) ->
             ( model |> log (httpErrorString error)
             , Cmd.none
             )
 
-        RecipePostResponse (Ok string) ->
+        PostRecipeResponse (Ok string) ->
             ( model |> log (string)
             , Cmd.none
             )
 
-        RecipePostResponse (Err error) ->
+        PostRecipeResponse (Err error) ->
             ( model |> log (httpErrorString error)
             , Cmd.none
             )
@@ -113,6 +121,9 @@ createNewRecipe model =
 
 
 
+-- AddIngredient : Ingredient -> Ingredient -> Ingredient
+-- AddIngredient ing =
+--     { ingredient | ingredient = ing.ingredient, sequence = ing.sequence }
 -- SUBSCRIPTIONS
 
 

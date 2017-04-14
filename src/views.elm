@@ -22,7 +22,7 @@ viewPage route model =
         Home ->
             div []
                 [ text "These are your recipes"
-                , input [ type_ "checkbox", onClick ToggleFavorite ] []
+                , displayRecipes model.recipes
                 ]
 
         New ->
@@ -32,10 +32,10 @@ viewPage route model =
             div []
                 [ text "login here"
                 , button
-                    [ onClick Send
+                    [ onClick GetRecipes
                     , class "btn btn-primary"
                     ]
-                    [ text "send" ]
+                    [ text "Get Recipes" ]
                 ]
 
         Import ->
@@ -115,16 +115,16 @@ newRecipeForm model =
                     [ name "ingredients"
                     , class "form-control"
                     , type_ "text"
-                    , value model.newIngredient
+                    , value model.newIngredient.ingredient
                     , placeholder "Enter an ingredient"
-                    , onInput UpdateIngredients
+                    , onInput UpdateNewIngredient
                     ]
                     []
                 , span [ class "input-group-btn" ]
                     [ button
                         [ class "btn btn-secondary"
                         , type_ "button"
-                        , onClick UpdateIngredient
+                        , onClick AddIngredient
                         ]
                         [ text "Add" ]
                     ]
@@ -138,15 +138,15 @@ newRecipeForm model =
                     , class "form-control"
                     , type_ "text"
                     , placeholder "Enter an instruction"
-                    , value model.newInstruction
-                    , onInput UpdateInstructions
+                    , value model.newInstruction.instruction
+                    , onInput UpdateNewInstruction
                     ]
                     []
                 , span [ class "input-group-btn" ]
                     [ button
                         [ class "btn btn-secondary"
                         , type_ "button"
-                        , onClick UpdateInstruction
+                        , onClick AddInstruction
                         ]
                         [ text "Add" ]
                     ]
@@ -188,9 +188,9 @@ recipeDisplay model =
         [ h4 [] [ text model.newTitle ]
         , dl []
             [ dt [] [ text "Ingredients" ]
-            , dd [] [ listDisplay model.newIngredients ]
+            , dd [] [ displayIngredients model.newIngredients ]
             , dt [] [ text "Instructions" ]
-            , dd [] [ listDisplay model.newInstructions ]
+            , dd [] [ displayInstructions model.newInstructions ]
             , dt [] [ text "Favorite" ]
             , dd [] [ text (toString model.newFavorite) ]
             , dt [] [ text "Notes" ]
@@ -199,8 +199,32 @@ recipeDisplay model =
         ]
 
 
-listDisplay : List String -> Html Msg
-listDisplay list =
+displayIngredients : List Ingredient -> Html Msg
+displayIngredients list =
     list
-        |> List.map (\item -> li [] [ text item ])
+        |> List.map (\item -> li [] [ text item.ingredient ])
+        |> ol []
+
+
+displayInstructions : List Instruction -> Html Msg
+displayInstructions list =
+    list
+        |> List.map (\item -> li [] [ text item.instruction ])
+        |> ol []
+
+
+displayRecipe : Recipe -> Html Msg
+displayRecipe recipe =
+    ul []
+        [ li [] [ text recipe.title ]
+        , li [] [ text recipe.notes ]
+        , li [] [ displayInstructions recipe.instructions ]
+        , li [] [ displayIngredients recipe.ingredients ]
+        ]
+
+
+displayRecipes : List Recipe -> Html Msg
+displayRecipes recipes =
+    recipes
+        |> List.map (\item -> li [] [ displayRecipe item ])
         |> ol []

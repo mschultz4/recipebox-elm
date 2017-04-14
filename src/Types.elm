@@ -2,7 +2,6 @@ module Types exposing (..)
 
 import Navigation exposing (Location)
 import Http exposing (..)
-import Dict
 
 
 -- MODEL
@@ -12,11 +11,11 @@ type alias Model =
     { uid : Int
     , newRoute : Route
     , recipes : List Recipe
-    , newIngredient : String
-    , newInstruction : String
+    , newIngredient : Ingredient
+    , newInstruction : Instruction
     , newTitle : String
-    , newIngredients : List String
-    , newInstructions : List String
+    , newIngredients : List Ingredient
+    , newInstructions : List Instruction
     , newNotes : String
     , newFavorite : Bool
     }
@@ -24,10 +23,27 @@ type alias Model =
 
 type alias Recipe =
     { title : String
-    , ingredients : List String
-    , instructions : List String
+    , ingredients : List Ingredient
+    , instructions : List Instruction
     , notes : String
     , favorite : Bool
+    }
+
+
+type alias Recipes =
+    { recipes : List Recipe
+    }
+
+
+type alias Ingredient =
+    { ingredient : String
+    , sequence : Int
+    }
+
+
+type alias Instruction =
+    { instruction : String
+    , sequence : Int
     }
 
 
@@ -36,8 +52,8 @@ emptyModel route =
     { newRoute = route
     , uid = 0
     , recipes = []
-    , newIngredient = ""
-    , newInstruction = ""
+    , newIngredient = { ingredient = "", sequence = 0 }
+    , newInstruction = { instruction = "", sequence = 0 }
     , newTitle = ""
     , newIngredients = []
     , newInstructions = []
@@ -48,17 +64,17 @@ emptyModel route =
 
 type Msg
     = UpdateTitle String
-    | UpdateIngredient
-    | UpdateIngredients String
-    | UpdateInstruction
-    | UpdateInstructions String
+    | AddIngredient
+    | UpdateNewIngredient String
+    | AddInstruction
+    | UpdateNewInstruction String
     | UpdateNotes String
     | ToggleFavorite
     | OnLocationChange Navigation.Location
     | SaveRecipe
-    | Send
-    | PostResponse (Result Http.Error (Dict.Dict String String))
-    | RecipePostResponse (Result Http.Error String)
+    | GetRecipes
+    | GetRecipeResponse (Result Http.Error Recipes)
+    | PostRecipeResponse (Result Http.Error String)
 
 
 type Route

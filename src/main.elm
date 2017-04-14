@@ -5,6 +5,7 @@ import Views exposing (..)
 import Types exposing (..)
 import State exposing (..)
 import Router exposing (parseLocation)
+import Commands exposing (getRecipes)
 
 
 main : Program Never Model Msg
@@ -20,5 +21,5 @@ main =
 init : Navigation.Location -> ( Model, Cmd Msg )
 init location =
     ( emptyModel (parseLocation location)
-    , Cmd.none
+    , getRecipes
     )
